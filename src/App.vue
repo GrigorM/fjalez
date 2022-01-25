@@ -1,9 +1,9 @@
 <template>
   <Header />
-  <main>
+  <!-- <main> -->
     <Board :words="words"/>
     <Keyboard @check="check" @type="type" @clear="clear" :usedLetters="usedLetters"/>
-  </main>
+  <!-- </main> -->
 </template>
 
 <script>
