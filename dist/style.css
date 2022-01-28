@@ -158,6 +158,10 @@ main {
   width: 270px;
 } */
 
+.keyboard {
+  padding: 0 7px;
+}
+
 .keyboard .row {
     display: flex;
     justify-content: stretch;
@@ -166,14 +170,17 @@ main {
 .keyboard .row button {
     height: 58px;
     flex: 1;
-    margin-bottom: 5px;
+    margin-bottom: 7px;
     text-transform: uppercase;
+    background-color: #818384;
+    color: #fafafa;
+    font-weight: 700;
     border: none;
     border-radius: 3px;
 }
 
 .keyboard .row button.absent {
-  background-color: #777777;
+  background-color: #3a3a3c;
 }
 .keyboard .row button.present {
   background-color: #b59f3b;
@@ -183,7 +190,7 @@ main {
 }
 
 .keyboard .row button:not(:last-child) {
-    margin-right: 3px;
+    margin-right: 5px;
 }
 
 .keyboard .row .spacer-half {
