@@ -9,14 +9,14 @@
             </button>
         </div>
         <div class="row">
-            <div class="spacer-half"></div>
+            <!-- <div class="spacer-half"></div> -->
             <button v-for="(letter, index) in row2"
                 :key="`r2-${index}`" 
                 @click="type(letter)" 
                 :class="letterState(letter)">
                 {{ letter }}
             </button>
-            <div class="spacer-half"></div>
+            <!-- <div class="spacer-half"></div> -->
         </div>
         <div class="row">
             <button id="enter" @click="check">Enter</button>
@@ -40,7 +40,7 @@ export default {
     props: ['usedLetters'],
     data() {
         return {
-            row1: ['q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p', 'ë'],
+            row1: ['q', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p', 'ë'],
             row2: ['a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', 'ç'],
             row3: ['z', 'x', 'c', 'v', 'b', 'n', 'm']
         }
@@ -75,3 +75,50 @@ export default {
     }
 }
 </script>
+
+<style>
+.keyboard {
+  padding: 0 7px;
+}
+
+.keyboard .row {
+    display: flex;
+    justify-content: stretch;
+}
+
+.keyboard .row button {
+    height: 58px;
+    flex: 1;
+    margin-bottom: 7px;
+    text-transform: uppercase;
+    background-color: #818384;
+    color: #fafafa;
+    font-weight: 700;
+    border: none;
+    border-radius: 3px;
+}
+
+.keyboard .row button.absent {
+  background-color: #3a3a3c;
+}
+.keyboard .row button.present {
+  background-color: #b59f3b;
+}
+.keyboard .row button.correct {
+  background-color: #538d4e;
+}
+
+.keyboard .row button:not(:last-child) {
+    margin-right: 5px; 
+}
+
+.keyboard .row .spacer-half {
+  flex: 0.5;
+  margin-right: 5px;
+}
+
+.keyboard .row button#enter, .keyboard .row button#backspace {
+  flex: 1.7;
+  /* margin: 0 5px; */
+}
+</style>

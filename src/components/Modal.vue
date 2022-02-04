@@ -1,8 +1,14 @@
 <template>
     <aside class="backdrop" :class="showModal" tabIndex="-1" role="presentation" >
         <div class="modal" role="dialog" aria-modal="true">
-            <button class="close" @click="closeModal">x</button>
-            <button class="share" @click="shareBoard">Share</button>
+            <div class="modal__header">
+                <h3>Statistika</h3>
+                <button class="close" @click="closeModal">x</button>
+            </div>
+            <div class="modal__body">
+                <p>Nuk janë akoma gati. Mundesh thjesht të ndash rezultatin</p>
+                <button class="share" @click="shareBoard">Share</button>
+            </div>
         </div>
     </aside>
 </template>
@@ -62,10 +68,20 @@ export default {
     background-color: #121213;
     border-radius: 7px;
     box-shadow: 0 4px 23px 0 rgba(0, 0, 0, 0.2);
+    padding: 20px;
 
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
+
+    font-size: 1.4rem;
+}
+.modal__header h3 {
+    margin: 0;
+}
+.modal__body {
+    text-align: center;
 }
 .modal .close {
     position: absolute;

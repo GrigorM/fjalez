@@ -25,8 +25,10 @@ export default {
   width: 160px;
   height: 69px;
   display: flex;
-  justify-content: center;
   align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 0 10px;
   font-size: 1.6rem;
   font-weight: bold;
   visibility: hidden;
