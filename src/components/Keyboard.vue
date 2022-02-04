@@ -59,7 +59,8 @@ export default {
             const usedLetter = this.usedLetters.filter(l => {
                 if (l.letter === letter) return l;
             });
-            return usedLetter.length ? usedLetter[0].state : '';  
+
+            return usedLetter.length ? usedLetter[usedLetter.length - 1].state : '';  
         }
     },
     mounted() {

@@ -234,9 +234,7 @@ export default {
     updateUsedLetters() {
       for(let i = 0; i<this.round; i++) {
         for(let j = 0; j< 5; j++) {
-          if (this.usedLetters.indexOf(this.words[i][j]) === -1) {
-            this.usedLetters.push(this.words[i][j])
-          }
+          this.usedLetters.push(this.words[i][j])
         }
       }
     },
