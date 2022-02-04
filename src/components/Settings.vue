@@ -1,10 +1,11 @@
 <template>
 <div class="settings" :class="open ? 'show': 'hide'">
     <header class="settings__header">
-        <h2>Si te luajme</h2>
+        <h2 v-if="page=='info'">Si te luajme</h2>
+        <h2 v-if="page=='settings'">Parametrat</h2>
         <button class="close-settings" @click="closeSettings">x</button>
     </header>
-    <article class="settings__body">
+    <article v-if="page=='info'" class="settings__body">
         <p>Gjej FJALËZËN me 6 prova</p>
         <p>Cdo provë duhet të jetë një fjalë e vlefshme me 5 gërma (gërmat dyshe numërohen si 2 gërma 🙁)</p>
         <p></p>
@@ -37,7 +38,14 @@
         <p>Fjala nuk përmban gërmën J</p>
 
         <hr />
-        <p>Cdo ditë një FJALËZ e re</p>
+        <p>Cdo ditë një FJALËZ e re (kismet, nuk eshte akoma gati)</p>
+    </article>
+    <article v-else-if="page=='settings'">
+        <p>Nuk janë akoma gati.</p>
+        <p>
+            <input type="text" v-model="secret"/>
+            <button @click="reset">Reset</button>
+        </p>
     </article>
 </div>
 </template>
@@ -49,9 +57,22 @@ export default {
         LetterTile
     },
     props: ['open', 'page'],
+    data() {
+        return {
+            le_secret: '00000',
+            secret: ''
+        }
+    },
     methods: {
         closeSettings() {
             this.$emit('closeSettings');
+        },
+        reset() {
+            if (this.secret === this.le_secret) {
+                localStorage.removeItem('fjaleza')
+                window.location.reload()
+                // this.$emit('reset')
+            }
         }
     },
     mounted() {
@@ -74,6 +95,8 @@ export default {
     background-color: var(--background-color);
     max-width: 500px;
     margin: auto;
+    padding: 0 10px;
+    font-size: 1.4rem;
 }
 .settings.show {
     display: block;

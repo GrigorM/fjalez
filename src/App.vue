@@ -221,7 +221,9 @@ export default {
       }
 
       if (guessed) {
-        this.openModal = true;
+        setTimeout(() => {
+          this.openModal = true;
+        }, 3000)
       }
 
       this.round ++;
