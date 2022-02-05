@@ -32,7 +32,8 @@ export default {
   },
   data() {
       return {
-          fjaleza: 'ideal',
+          fjalezat: ["ideal","maçok","provë","janar","qasje","idiot","trung"],
+          fjaleza: '',
           round: 0,
           letterPointer: 0,
           words: [
@@ -143,6 +144,18 @@ export default {
           settingsPage: 'INFO'
       }
   },
+  computed: {
+    // fjaleza() {
+    // const start = new Date(2022, 2, 4, 0, 0, 0);
+    // const today = new Date();
+    // const diff = today.getDate() - start.getDate();
+    // if (diff === 0) {
+    //   localStorage.removeItem('fjaleza')
+    // }
+    // return this.fjalezat[diff+1]
+    // }
+    
+  },
   methods: {
     joinWord() {
       let hipoteza = this.words[this.round].map(({letter}) => letter)
@@ -168,7 +181,11 @@ export default {
                 this.feedback()
               }
             })
-            .catch(error => {console.log(error); alert('Error')})
+            .catch(error => {
+              console.log(error);
+              alert('Error')
+              this.loading = false;
+            })
         }
       }
     },
@@ -201,15 +218,31 @@ export default {
       }
     },
     feedback() {
+      console.log('feedback')
       let guessed = false;
       const guess = this.joinWord();
       if (guess === this.fjaleza) {
         guessed = true;
       }
+
+      // var obj={}
+      // let str = guess;
+
+      // for(let x = 0; x < str.length; x++) {
+      //     var l = str.charAt(x)
+      //     obj[l] = (isNaN(obj[l]) ? 1 : obj[l] + 1);
+      // }
+
       this.words[this.round].forEach((letter, index) => {
+        // let count = obj[letter.letter];
+        // console.log(count)
+        // if (count > 1) {
+        //   const fi = 
+        // }
         if (letter.letter === this.fjaleza[index]) {
+          
           letter.state = 'correct';
-        } else if ( this.fjaleza.indexOf(letter.letter) !== -1 ) {
+        } else if ( this.fjaleza.indexOf(letter.letter) !== -1) {
           letter.state = 'present';
         } else {
           letter.state = 'absent';
@@ -294,13 +327,68 @@ export default {
     }
   },
   mounted() {
-    if (localStorage.getItem('fjaleza')) {
-      const words = JSON.parse(localStorage.getItem('fjaleza')) 
-      this.words = words.boardState
-      this.round = words.round
-      this.finished = words.finished
-      this.usedLetters = words.usedLetters
+    // let lastPlayed;
+    // if (localStorage.getItem('fjaleza')) {
+    //   const words = JSON.parse(localStorage.getItem('fjaleza')) 
+    //   this.words = words.boardState
+    //   this.round = words.round
+    //   this.finished = words.finished
+      
+    //   this.usedLetters = words.usedLetters
+    // }
+    let lastPlayed;
+    const start = new Date(2022, 2, 4, 0, 0, 0);
+    const today = new Date();
+    // const lastPlayedDate = new Date(lastPlayed.date)
+    if (localStorage.getItem('flp')) {
+      lastPlayed = JSON.parse(localStorage.getItem('flp'))
+      // console.log(lastPlayed)
+      // const start = new Date(2022, 2, 4, 0, 0, 0);
+      // const today = new Date();
+      const lastPlayedDate = new Date(lastPlayed.date)
+      // const diff = today.getDate() - start.getDate();
+      const diffPlayed = today.getDate() - lastPlayedDate.getDate();
+      console.log(diffPlayed)
+      if(diffPlayed > 0) {
+        localStorage.removeItem('fjaleza')
+      } else {
+        console.log('not yet')
+      }
+      if (localStorage.getItem('fjaleza')) {
+        const words = JSON.parse(localStorage.getItem('fjaleza')) 
+        this.words = words.boardState
+        this.round = words.round
+        this.finished = words.finished
+        
+        this.usedLetters = words.usedLetters
+      }
+      this.fjaleza = this.fjalezat[diff];
+      const date = {
+        date: new Date().toString()
+      } 
+      localStorage.setItem('flp', JSON.stringify(date));
+    } else {
+      localStorage.removeItem('fjaleza')
+      const date = {
+        date: new Date().toString()
+      } 
+      localStorage.setItem('flp', JSON.stringify(date));
+
     }
+    
+
+    // const start = new Date(2022, 2, 4, 0, 0, 0);
+    // const today = new Date();
+    // const lastPlayedDate = new Date(lastPlayed.date)
+    const diff = today.getDate() - start.getDate();
+    // const diffPlayed = today.getDate() - lastPlayedDate.getDate();
+    this.fjaleza = this.fjalezat[diff];
+    // if (diff === 1) {
+    //   localStorage.removeItem('fjaleza')
+      
+    // }
+    // this.fjaleza = this.fjalezat[diff];
+    // return this.fjalezat[diff+1]
   }
 }
 </script>
