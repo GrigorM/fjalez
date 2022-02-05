@@ -40,8 +40,8 @@ export default {
     props: ['usedLetters'],
     data() {
         return {
-            row1: ['q', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p', 'ë'],
-            row2: ['a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', 'ç'],
+            row1: ['q', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p', 'ç'],
+            row2: ['a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', 'ë'],
             row3: ['z', 'x', 'c', 'v', 'b', 'n', 'm']
         }
     },

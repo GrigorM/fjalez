@@ -6,8 +6,9 @@
                 <button class="close" @click="closeModal">x</button>
             </div>
             <div class="modal__body">
-                <p>Nuk janë akoma gati. Mundesh thjesht të ndash rezultatin</p>
-                <button class="share" @click="shareBoard">Share</button>
+                <p>Nuk janë akoma gati. Mundesh thjesht të ndash rezultatin në fund të lojës</p>
+                
+                <button v-if="finished" class="share" @click="shareBoard">Share</button>
             </div>
         </div>
     </aside>
@@ -15,7 +16,7 @@
 
 <script>
 export default {
-    props: ['open'],
+    props: ['open', 'finished'],
     computed: {
         showModal() {
             return this.open ? 'show' : 'hide';

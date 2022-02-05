@@ -1,13 +1,11 @@
 <template>
   <Header @share="shareBoard" @openStats="openStats" @openSettings="openSettings"/>
-  <!-- <main> -->
-    <Board :words="words"/>
-    <Keyboard @check="check" @type="type" @clear="clear" :usedLetters="usedLetters"/>
-    <Toast :message="message" :open="openToast"/>
-    <Modal :open="openModal" @share="shareBoard" @closeModal="closeModal" />
-    <Loading :open="loading"/>
-    <Settings :open="showSettings" :page="settingsPage" @closeSettings="closeSettings" />
-  <!-- </main> -->
+  <Board :words="words"/>
+  <Keyboard @check="check" @type="type" @clear="clear" :usedLetters="usedLetters"/>
+  <Toast :message="message" :open="openToast"/>
+  <Modal :open="openModal" :finished="finished" @share="shareBoard" @closeModal="closeModal" />
+  <Loading :open="loading"/>
+  <Settings :open="showSettings" :page="settingsPage" @closeSettings="closeSettings" />
 </template>
 
 <script>
@@ -34,6 +32,7 @@ export default {
       return {
           fjalezat: ["ideal","maçok","provë","janar","qasje","idiot","trung"],
           fjaleza: '',
+          fIndex: 0,
           round: 0,
           letterPointer: 0,
           words: [
@@ -144,18 +143,6 @@ export default {
           settingsPage: 'INFO'
       }
   },
-  computed: {
-    // fjaleza() {
-    // const start = new Date(2022, 2, 4, 0, 0, 0);
-    // const today = new Date();
-    // const diff = today.getDate() - start.getDate();
-    // if (diff === 0) {
-    //   localStorage.removeItem('fjaleza')
-    // }
-    // return this.fjalezat[diff+1]
-    // }
-    
-  },
   methods: {
     joinWord() {
       let hipoteza = this.words[this.round].map(({letter}) => letter)
@@ -175,7 +162,6 @@ export default {
             .then(data => {
               this.loading = false;
               if (data.exactMatches.length === 0) {
-                // alert('Fjale e pavlefshme')
                 this.showToast('Fjale e pavlefshme')
               } else {
                 this.feedback()
@@ -217,36 +203,49 @@ export default {
           this.letterPointer++;
       }
     },
+    getLetterCount(str) {
+      const obj = {};
+      for(let x = 0; x < str.length; x++) {
+          let l = str.charAt(x)
+          obj[l] = (isNaN(obj[l]) ? 1 : obj[l] + 1);
+      }
+      return obj;
+    },
     feedback() {
-      console.log('feedback')
       let guessed = false;
       const guess = this.joinWord();
       if (guess === this.fjaleza) {
         guessed = true;
       }
-
-      // var obj={}
-      // let str = guess;
-
-      // for(let x = 0; x < str.length; x++) {
-      //     var l = str.charAt(x)
-      //     obj[l] = (isNaN(obj[l]) ? 1 : obj[l] + 1);
-      // }
+      const letterCount = this.getLetterCount(guess);
+      const letterCountOriginal = this.getLetterCount(this.fjaleza);
 
       this.words[this.round].forEach((letter, index) => {
-        // let count = obj[letter.letter];
-        // console.log(count)
-        // if (count > 1) {
-        //   const fi = 
-        // }
-        if (letter.letter === this.fjaleza[index]) {
-          
-          letter.state = 'correct';
-        } else if ( this.fjaleza.indexOf(letter.letter) !== -1) {
-          letter.state = 'present';
-        } else {
+        let count = letterCount[letter.letter];
+        let fjalezaCount = letterCountOriginal[letter.letter];
+        if (count == fjalezaCount || count < fjalezaCount) {
+          this.checkPosition(letter, index);
+        } else if (count > fjalezaCount && fjalezaCount > 0) {
+          // evaluate only the (fjalezaCount) first occurences
+          const indexes = guess.split('').map((c, i) => {
+                            if (c === letter.letter) return i;
+                          }).filter(e => e !== undefined);
+          if (index < indexes[fjalezaCount]) {
+            this.checkPosition(letter, index);         
+          } else {
+            letter.state = 'absent';
+          }
+        } else if (!fjalezaCount) {
           letter.state = 'absent';
         }
+        // if (letter.letter === this.fjaleza[index]) {
+        //   letter.state = 'correct';
+        // } else if ( this.fjaleza.indexOf(letter.letter) !== -1) {
+        //   if (count == 1) 
+        //     letter.state = 'present';
+        // } else {
+        //   letter.state = 'absent';
+        // }
       })
 
       if (guessed || this.round === 6) {
@@ -263,6 +262,13 @@ export default {
       this.letterPointer = 0;
       this.updateUsedLetters();
       this.saveToLocalStorage();
+    },
+    checkPosition(letter, index) {
+      if (letter.letter === this.fjaleza[index]) {
+        letter.state = 'correct';
+      } else if ( this.fjaleza.indexOf(letter.letter) !== -1) {
+        letter.state = 'present';
+      } 
     },
     updateUsedLetters() {
       for(let i = 0; i<this.round; i++) {
@@ -282,7 +288,7 @@ export default {
       localStorage.setItem('fjaleza', JSON.stringify(obj))
     },
     shareBoard() {
-      let text = '';
+      let text = `Fjalez ${this.fIndex} ${this.round}/6\n`;
       for(let i=0; i < this.round; i++) {
         for(let j=0; j<5; j++) {
           switch (this.words[i][j].state) {
@@ -312,7 +318,6 @@ export default {
       }, 1000);
     },
     openStats() {
-      console.log('open modal')
       this.openModal = true;
     },
     closeModal() {
@@ -327,26 +332,12 @@ export default {
     }
   },
   mounted() {
-    // let lastPlayed;
-    // if (localStorage.getItem('fjaleza')) {
-    //   const words = JSON.parse(localStorage.getItem('fjaleza')) 
-    //   this.words = words.boardState
-    //   this.round = words.round
-    //   this.finished = words.finished
-      
-    //   this.usedLetters = words.usedLetters
-    // }
     let lastPlayed;
     const start = new Date(2022, 2, 4, 0, 0, 0);
     const today = new Date();
-    // const lastPlayedDate = new Date(lastPlayed.date)
     if (localStorage.getItem('flp')) {
       lastPlayed = JSON.parse(localStorage.getItem('flp'))
-      // console.log(lastPlayed)
-      // const start = new Date(2022, 2, 4, 0, 0, 0);
-      // const today = new Date();
       const lastPlayedDate = new Date(lastPlayed.date)
-      // const diff = today.getDate() - start.getDate();
       const diffPlayed = today.getDate() - lastPlayedDate.getDate();
       console.log(diffPlayed)
       if(diffPlayed > 0) {
@@ -362,7 +353,6 @@ export default {
         
         this.usedLetters = words.usedLetters
       }
-      this.fjaleza = this.fjalezat[diff];
       const date = {
         date: new Date().toString()
       } 
@@ -373,22 +363,11 @@ export default {
         date: new Date().toString()
       } 
       localStorage.setItem('flp', JSON.stringify(date));
-
     }
     
-
-    // const start = new Date(2022, 2, 4, 0, 0, 0);
-    // const today = new Date();
-    // const lastPlayedDate = new Date(lastPlayed.date)
     const diff = today.getDate() - start.getDate();
-    // const diffPlayed = today.getDate() - lastPlayedDate.getDate();
+    this.fIndex = diff;
     this.fjaleza = this.fjalezat[diff];
-    // if (diff === 1) {
-    //   localStorage.removeItem('fjaleza')
-      
-    // }
-    // this.fjaleza = this.fjalezat[diff];
-    // return this.fjalezat[diff+1]
   }
 }
 </script>

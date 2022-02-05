@@ -27,7 +27,7 @@
             <LetterTile :letter="{letter: 'u', state: ''}"/>
             <LetterTile :letter="{letter: 'r', state: ''}"/>
         </div>
-        <p>Fjala përmban gërmën K, por në një tjetër pozicion</p>
+        <p>Gërma K është pjesë e fjalës, por jo në këtë pozicion</p>
         <div class="word">
             <LetterTile :letter="{letter: 'm', state: ''}"/>
             <LetterTile :letter="{letter: 'a', state: ''}"/>
@@ -35,10 +35,10 @@
             <LetterTile :letter="{letter: 'j', state: 'absent'}"/>
             <LetterTile :letter="{letter: 'e', state: ''}"/>
         </div>
-        <p>Fjala nuk përmban gërmën J</p>
+        <p>Gërma J nuk është pjesë e fjalës</p>
 
         <hr />
-        <p>Cdo ditë një FJALËZ e re (kismet, nuk eshte akoma gati)</p>
+        <p>Cdo ditë një FJALËZ e re!</p>
     </article>
     <article v-else-if="page=='settings'">
         <p>Nuk janë akoma gati.</p>
