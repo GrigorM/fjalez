@@ -18,6 +18,7 @@ import Loading from './components/Loading.vue'
 import Settings from './components/Settings.vue'
 
 import { initialBoardState } from './assets/constants';
+import { getLetterCount } from './util/utils';
 
 export default {
   name: 'App',
@@ -49,43 +50,6 @@ export default {
       }
   },
   methods: {
-    joinWord() {
-      let hipoteza = this.words[this.round].map(({letter}) => letter).join("")
-      return hipoteza;
-    },
-    check() {
-      if (!this.finished) {
-        if (this.letterPointer < 5) {
-          this.showToast('S\'ka mjaftueshem germa')
-        } else {
-          const guess = this.joinWord();
-          this.loading = true;
-          fetch(`https://qub10cxllf.execute-api.eu-central-1.amazonaws.com/prod/define/${guess}`)
-            .then(res => res.json())
-            .then(data => {
-              this.loading = false;
-              if (data.exactMatches.length === 0) {
-                this.showToast('Fjale e pavlefshme')
-              } else {
-                this.feedback()
-              }
-            })
-            .catch(error => {
-              console.log(error);
-              alert('Error')
-              this.loading = false;
-            })
-        }
-      }
-    },
-    clear() {
-      if (!this.finished) {
-        if (this.letterPointer > 0) {
-          this.letterPointer--;
-          this.words[this.round][this.letterPointer].letter = '';
-        }
-      }
-    },
     type(char) {
       // const doubleCharsWith = {
       //   'h': ['d', 's', 't', 'x', 'z'],
@@ -105,14 +69,43 @@ export default {
           this.words[this.round][this.letterPointer].letter = char;
           this.letterPointer++;
       }
-    },
-    getLetterCount(str) {
-      const obj = {};
-      for(let x = 0; x < str.length; x++) {
-          let l = str.charAt(x)
-          obj[l] = (isNaN(obj[l]) ? 1 : obj[l] + 1);
+    },   
+    clear() {
+      if (!this.finished) {
+        if (this.letterPointer > 0) {
+          this.letterPointer--;
+          this.words[this.round][this.letterPointer].letter = '';
+        }
       }
-      return obj;
+    }, 
+    check() {
+      if (!this.finished) {
+        if (this.letterPointer < 5) {
+          this.showToast('S\'ka mjaftueshem germa')
+        } else {
+          const guess = this.joinWord();
+          this.loading = true;
+          fetch(`https://qub10cxllf.execute-api.eu-central-1.amazonaws.com/prod/define/${guess}`)
+            .then(res => res.json())
+            .then(data => {
+              this.loading = false;
+              if (data.exactMatches.length === 0) {
+                this.showToast('Fjalë e pavlefshme')
+              } else {
+                this.feedback()
+              }
+            })
+            .catch(error => {
+              console.log(error);
+              alert('Error')
+              this.loading = false;
+            })
+        }
+      }
+    },
+    joinWord() {
+      let hipoteza = this.words[this.round].map(({letter}) => letter).join("")
+      return hipoteza;
     },
     feedback() {
       let guessed = false;
@@ -120,19 +113,19 @@ export default {
       if (guess === this.fjaleza) {
         guessed = true;
       }
-      const letterCount = this.getLetterCount(guess);
-      const letterCountOriginal = this.getLetterCount(this.fjaleza);
+      const letterCountGuess = getLetterCount(guess);
+      const letterCountCorrect = getLetterCount(this.fjaleza);
 
       this.words[this.round].forEach((letter, index) => {
-        let count = letterCount[letter.letter];
-        let fjalezaCount = letterCountOriginal[letter.letter];
+        let count = letterCountGuess[letter.letter];
+        let fjalezaCount = letterCountCorrect[letter.letter];
         if (count == fjalezaCount || count < fjalezaCount) {
           this.checkPosition(letter, index);
         } else if (count > fjalezaCount && fjalezaCount > 0) {
           // evaluate only the ${fjalezaCount} first occurences
           const indexes = guess.split('').map((c, i) => {
-                            if (c === letter.letter) return i;
-                          }).filter(e => e !== undefined);
+            if (c === letter.letter) return i;
+          }).filter(e => e !== undefined);
           if (index < indexes[fjalezaCount]) {
             this.checkPosition(letter, index);         
           } else {
