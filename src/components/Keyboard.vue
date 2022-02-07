@@ -36,6 +36,7 @@
 </template>
 
 <script>
+import { LETTER_STATE } from '../assets/constants';
 export default {
     props: ['usedLetters'],
     data() {
@@ -60,7 +61,7 @@ export default {
                 if (l.letter === letter) return l;
             });
 
-            return usedLetter.length ? usedLetter[usedLetter.length - 1].state : '';  
+            return usedLetter.length ? LETTER_STATE[usedLetter[usedLetter.length - 1].state] : '';  
         }
     },
     mounted() {

@@ -1,12 +1,19 @@
 <template>
-    <div class="letter" :class="letter.state">
+    <div class="letter" :class="letterState">
         {{ letter.letter }}
     </div>
 </template>
 
 <script>
+import { LETTER_STATE } from '../assets/constants';
+
 export default {
-    props: ['letter']
+    props: ['letter'],
+    computed: {
+      letterState() {
+        return LETTER_STATE[this.letter.state];
+      }
+    }
 }
 </script>
 

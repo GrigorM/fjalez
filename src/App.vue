@@ -17,6 +17,8 @@ import Modal from './components/Modal.vue'
 import Loading from './components/Loading.vue'
 import Settings from './components/Settings.vue'
 
+import { initialBoardState } from './assets/constants';
+
 export default {
   name: 'App',
   components: {
@@ -35,104 +37,7 @@ export default {
           fIndex: 0,
           round: 0,
           letterPointer: 0,
-          words: [
-              [{
-                letter: '',
-                state: ''
-              }, {
-                letter: '',
-                state: ''
-              }, {
-                letter: '',
-                state: ''
-              }, {
-                letter: '',
-                state: ''
-              }, {
-                letter: '',
-                state: ''
-              }],
-              [{
-                letter: '',
-                state: ''
-              }, {
-                letter: '',
-                state: ''
-              }, {
-                letter: '',
-                state: ''
-              }, {
-                letter: '',
-                state: ''
-              }, {
-                letter: '',
-                state: ''
-              }],
-              [{
-                letter: '',
-                state: ''
-              }, {
-                letter: '',
-                state: ''
-              }, {
-                letter: '',
-                state: ''
-              }, {
-                letter: '',
-                state: ''
-              }, {
-                letter: '',
-                state: ''
-              }],
-              [{
-                letter: '',
-                state: ''
-              }, {
-                letter: '',
-                state: ''
-              }, {
-                letter: '',
-                state: ''
-              }, {
-                letter: '',
-                state: ''
-              }, {
-                letter: '',
-                state: ''
-              }],
-              [{
-                letter: '',
-                state: ''
-              }, {
-                letter: '',
-                state: ''
-              }, {
-                letter: '',
-                state: ''
-              }, {
-                letter: '',
-                state: ''
-              }, {
-                letter: '',
-                state: ''
-              }],
-              [{
-                letter: '',
-                state: ''
-              }, {
-                letter: '',
-                state: ''
-              }, {
-                letter: '',
-                state: ''
-              }, {
-                letter: '',
-                state: ''
-              }, {
-                letter: '',
-                state: ''
-              }],
-          ],
+          words: initialBoardState,
           usedLetters: [],
           finished: false,
           openToast: false,
@@ -145,14 +50,12 @@ export default {
   },
   methods: {
     joinWord() {
-      let hipoteza = this.words[this.round].map(({letter}) => letter)
-      hipoteza = hipoteza.join("");
+      let hipoteza = this.words[this.round].map(({letter}) => letter).join("")
       return hipoteza;
     },
     check() {
       if (!this.finished) {
         if (this.letterPointer < 5) {
-          // alert('s\'ka mjaftueshem germa')
           this.showToast('S\'ka mjaftueshem germa')
         } else {
           const guess = this.joinWord();
@@ -226,26 +129,18 @@ export default {
         if (count == fjalezaCount || count < fjalezaCount) {
           this.checkPosition(letter, index);
         } else if (count > fjalezaCount && fjalezaCount > 0) {
-          // evaluate only the (fjalezaCount) first occurences
+          // evaluate only the ${fjalezaCount} first occurences
           const indexes = guess.split('').map((c, i) => {
                             if (c === letter.letter) return i;
                           }).filter(e => e !== undefined);
           if (index < indexes[fjalezaCount]) {
             this.checkPosition(letter, index);         
           } else {
-            letter.state = 'absent';
+            letter.state = 0;
           }
         } else if (!fjalezaCount) {
-          letter.state = 'absent';
+          letter.state = 0;
         }
-        // if (letter.letter === this.fjaleza[index]) {
-        //   letter.state = 'correct';
-        // } else if ( this.fjaleza.indexOf(letter.letter) !== -1) {
-        //   if (count == 1) 
-        //     letter.state = 'present';
-        // } else {
-        //   letter.state = 'absent';
-        // }
       })
 
       if (guessed || this.round === 6) {
@@ -265,15 +160,21 @@ export default {
     },
     checkPosition(letter, index) {
       if (letter.letter === this.fjaleza[index]) {
-        letter.state = 'correct';
+        letter.state = 2;
       } else if ( this.fjaleza.indexOf(letter.letter) !== -1) {
-        letter.state = 'present';
+        letter.state = 1;
       } 
     },
     updateUsedLetters() {
-      for(let i = 0; i<this.round; i++) {
-        for(let j = 0; j< 5; j++) {
-          this.usedLetters.push(this.words[i][j])
+      for(let j = 0; j< 5; j++) {
+        const letter = this.words[this.round-1][j];
+        const previousIndex = this.usedLetters.findIndex(l => l.letter === letter.letter);
+        if (previousIndex != -1) {
+          if (letter.state > this.usedLetters[previousIndex].state ) {
+            this.usedLetters[previousIndex].state = letter.state;
+          }
+        } else {
+          this.usedLetters.push(letter)
         }
       }
     },
@@ -292,13 +193,13 @@ export default {
       for(let i=0; i < this.round; i++) {
         for(let j=0; j<5; j++) {
           switch (this.words[i][j].state) {
-            case 'absent':
+            case 0:
               text += '⬛'
               break;
-            case 'present':
+            case 1:
               text += '🟨'
               break;
-            case 'correct':
+            case 2:
               text += '🟩'
               break;
           
@@ -339,18 +240,14 @@ export default {
       lastPlayed = JSON.parse(localStorage.getItem('flp'))
       const lastPlayedDate = new Date(lastPlayed.date)
       const diffPlayed = today.getDate() - lastPlayedDate.getDate();
-      console.log(diffPlayed)
       if(diffPlayed > 0) {
         localStorage.removeItem('fjaleza')
-      } else {
-        console.log('not yet')
       }
       if (localStorage.getItem('fjaleza')) {
         const words = JSON.parse(localStorage.getItem('fjaleza')) 
         this.words = words.boardState
         this.round = words.round
         this.finished = words.finished
-        
         this.usedLetters = words.usedLetters
       }
       const date = {
@@ -373,45 +270,5 @@ export default {
 </script>
 
 <style>
-.nightmode {
-  --background-color: #121213;
-  --color: #fafafa;
-  --border: #3a3a3c;
-}
-.daymode {
-  --background-color: #121213;
-  --color: #fafafa;
-  --border: #3a3a3c;
-}
-:root {
-  --keyboard-and-header: 270px;
-}
-html {
-  font-size: 10px;
-  font-family: sans-serif;
-  --header-height: 50px;
-  height: 100%;
-}
-
-body {
-  background-color: var(--background-color);
-  color: var(--color);
-  padding: 0;
-  margin: 0;
-  height: 100%;
-}
-#game {
-  width: 100%;
-  max-width: 500px;
-  margin: 0 auto;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-}
-
-main {
-  width: 100%;
-  max-width: 500px;
-  margin: auto;
-}
+@import './assets/app.css';
 </style>

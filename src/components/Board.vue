@@ -19,7 +19,7 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 .board-container {
   display: flex;
   justify-content: center;
@@ -43,23 +43,4 @@ export default {
   grid-template-columns: repeat(5, 1fr);
   grid-gap: 5px;
 }
-/* .board .letter {
-  border: 2px solid var(--border);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 2rem;
-  text-transform: uppercase;
-  font-weight: 700;
-}
-
-.board .letter.absent {
-  background-color: #3a3a3c;
-}
-.board .letter.present {
-  background-color: #b59f3b;
-}
-.board .letter.correct {
-  background-color: #538d4e;
-} */
 </style>

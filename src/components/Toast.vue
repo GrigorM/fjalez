@@ -14,7 +14,7 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 .toast {
   background-color: white;
   color: #3a3a3a;
