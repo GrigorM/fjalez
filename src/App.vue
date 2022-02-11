@@ -19,6 +19,7 @@ import Settings from './components/Settings.vue'
 
 import { initialBoardState } from './assets/constants';
 import { getLetterCount } from './util/utils';
+import { fjalet } from './assets/words';
 
 export default {
   name: 'App',
@@ -33,7 +34,7 @@ export default {
   },
   data() {
       return {
-          fjalezat: ["ideal","maçok","provë","janar","qasje","idiot","trung"],
+          fjalezat: fjalet,
           fjaleza: '',
           fIndex: 0,
           round: 0,
@@ -160,7 +161,7 @@ export default {
     },
     updateUsedLetters() {
       for(let j = 0; j< 5; j++) {
-        const letter = this.words[this.round-1][j];
+        const letter = { ...this.words[this.round-1][j] };
         const previousIndex = this.usedLetters.findIndex(l => l.letter === letter.letter);
         if (previousIndex != -1) {
           if (letter.state > this.usedLetters[previousIndex].state ) {
