@@ -13,7 +13,7 @@
         <hr />
         <h2>Shembuj</h2>
         <div class="word">
-            <LetterTile :letter="{letter: 'q', state: 'correct'}"/>
+            <LetterTile :letter="{letter: 'q', state: 2}"/>
             <LetterTile :letter="{letter: 'a', state: ''}"/>
             <LetterTile :letter="{letter: 'r', state: ''}"/>
             <LetterTile :letter="{letter: 't', state: ''}"/>
@@ -23,7 +23,7 @@
         <div class="word">
             <LetterTile :letter="{letter: 's', state: ''}"/>
             <LetterTile :letter="{letter: 'i', state: ''}"/>
-            <LetterTile :letter="{letter: 'k', state: 'present'}"/>
+            <LetterTile :letter="{letter: 'k', state: 1}"/>
             <LetterTile :letter="{letter: 'u', state: ''}"/>
             <LetterTile :letter="{letter: 'r', state: ''}"/>
         </div>
@@ -32,7 +32,7 @@
             <LetterTile :letter="{letter: 'm', state: ''}"/>
             <LetterTile :letter="{letter: 'a', state: ''}"/>
             <LetterTile :letter="{letter: 't', state: ''}"/>
-            <LetterTile :letter="{letter: 'j', state: 'absent'}"/>
+            <LetterTile :letter="{letter: 'j', state: 0}"/>
             <LetterTile :letter="{letter: 'e', state: ''}"/>
         </div>
         <p>Gërma J nuk është pjesë e fjalës</p>
