@@ -228,7 +228,7 @@ export default {
   },
   mounted() {
     let lastPlayed;
-    const start = new Date(2022, 2, 4, 0, 0, 0);
+    const start = new Date("2022-2-4");
     const today = new Date();
     if (localStorage.getItem('flp')) {
       lastPlayed = JSON.parse(localStorage.getItem('flp'))
@@ -256,7 +256,8 @@ export default {
       localStorage.setItem('flp', JSON.stringify(date));
     }
     
-    const diff = today.getDate() - start.getDate();
+    let diff = today - start;
+    diff = Math.ceil(diff/(1000 * 60 * 60 * 24));
     this.fIndex = diff;
     this.fjaleza = this.fjalezat[diff];
   }
